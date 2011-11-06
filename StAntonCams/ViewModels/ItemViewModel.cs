@@ -134,7 +134,7 @@ namespace StAntonCams
             {
                 if (myIsolatedStorage.FileExists(this.CameraFileName))
                 {
-                    myIsolatedStorage.DeleteFile(this.CameraFileName);
+                   myIsolatedStorage.DeleteFile(this.CameraFileName);
                 }
 
                 using (IsolatedStorageFileStream fileStream = new IsolatedStorageFileStream(this.CameraFileName, FileMode.Create, myIsolatedStorage))
@@ -159,7 +159,10 @@ namespace StAntonCams
                 }
             }
 
-            this.NotifyPropertyChanged("CameraFileName");
+            System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                this.NotifyPropertyChanged("CameraFileName");
+            });
         }
 
 

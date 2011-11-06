@@ -28,11 +28,21 @@ namespace StAntonCams
             DataContext = App.ViewModel;
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
 
+            // Set up initial tile
+            StandardTileData NewTileData = new StandardTileData
+            {
+                BackTitle = "Last update: " + DateTime.Now.ToShortDateString(),
+                BackBackgroundImage = new Uri("http://livecam.abbag.com/valluga.jpg"),
+                BackContent = "View from Valluga"
+            };
+
+
             // Set up the tile here too
             tileSchedule.Interval = UpdateInterval.EveryHour;
             tileSchedule.MaxUpdateCount = 50;
             tileSchedule.Recurrence = UpdateRecurrence.Interval;
             tileSchedule.RemoteImageUri = new Uri(@"http://livecam.abbag.com/galzig.jpg");
+            
             tileSchedule.Start();
         }
 
@@ -43,6 +53,9 @@ namespace StAntonCams
             {
                 App.ViewModel.LoadData();
             }
+
+            App.ViewModel.RefreshCameras();
+            
         }
     }
 }

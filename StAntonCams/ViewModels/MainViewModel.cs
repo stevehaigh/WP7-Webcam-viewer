@@ -64,17 +64,25 @@ namespace StAntonCams
         {
             this.Items.Add(new ItemViewModel() { CameraName = "Galzig", CameraUrl = "http://livecam.abbag.com/galzig.jpg", CameraFileName = "galzig.jpg" });
             this.Items.Add(new ItemViewModel() { CameraName = "Valluga", CameraUrl = "http://livecam.abbag.com/valluga.jpg", CameraFileName = "valluga.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Rendl", CameraUrl = "http://livecam.abbag.com/rendl.jpg", CameraFileName = "rendl.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Town", CameraUrl = "http://livecam.abbag.com/skicenter.jpg", CameraFileName = "skicenter.jpg" });
+            //this.Items.Add(new ItemViewModel() { CameraName = "Rendl", CameraUrl = "http://livecam.abbag.com/rendl.jpg", CameraFileName = "rendl.jpg" });
+            //this.Items.Add(new ItemViewModel() { CameraName = "Town", CameraUrl = "http://livecam.abbag.com/skicenter.jpg", CameraFileName = "skicenter.jpg" });
             this.Items.Add(new ItemViewModel() { CameraName = "Nasserein", CameraUrl = "http://livecam.abbag.com/nasserein.jpg", CameraFileName = "nasserein.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Gampen", CameraUrl = "http://livecam.abbag.com/gampen.jpg", CameraFileName = "gampen.jpg" });
+            //this.Items.Add(new ItemViewModel() { CameraName = "Gampen", CameraUrl = "http://livecam.abbag.com/gampen.jpg", CameraFileName = "gampen.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "St Christoph", CameraUrl = "http://livecam.abbag.com/christoph1.jpg", CameraFileName = "christoph1.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Kapall", CameraUrl = "http://livecam.abbag.com/kapallbig.jpg", CameraFileName = "kapallbig.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Stuben", CameraUrl = "http://livecam.abbag.com/stuben.jpg", CameraFileName = "stuben.jpg" });
 
-            foreach(var item in Items)
+            this.IsDataLoaded = true;
+        }
+
+        public void RefreshCameras()
+        {
+            foreach (var item in Items)
             {
                 item.Update();
             }
 
-            this.IsDataLoaded = true;
+            this.NotifyPropertyChanged("Items");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

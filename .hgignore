@@ -1,0 +1,9 @@
+glob:*scc 
+glob:*.user 
+glob:*.suo 
+glob:*/[B|b]in 
+glob:*.suo 
+glob:*/[O|o]bj 
+glob:_ReSharper* 
+glob:*resharper* 
+glob:*/Thumbs.db

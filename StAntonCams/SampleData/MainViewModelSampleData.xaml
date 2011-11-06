@@ -1,0 +1,12 @@
+<local:MainViewModel 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"       
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:StAntonCams"> 
+    
+    <local:MainViewModel.Items>
+        <local:ItemViewModel CameraName="Galzig" CameraUrl="http://livecam.abbag.com/galzig.jpg" />
+        <local:ItemViewModel CameraName="Valuga" CameraUrl="http://livecam.abbag.com/valluga.jpg" />
+        <local:ItemViewModel CameraName="Rendl" CameraUrl="http://livecam.abbag.com/rendl.jpg"/>
+    </local:MainViewModel.Items>
+    
+</local:MainViewModel>

@@ -28,7 +28,8 @@
 
             <controls:Pivot.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding CameraUrl}" Stretch="Uniform" VerticalAlignment="Top"/>
+                    <Image Source="{Binding CameraFileName, Converter={StaticResource IsoImageCoverter}}"/>
+                    <!--Image Source="{Binding CameraUrl}" Stretch="Uniform" VerticalAlignment="Top"/-->
                 </DataTemplate>
             </controls:Pivot.ItemTemplate>
 

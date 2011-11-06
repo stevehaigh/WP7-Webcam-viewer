@@ -18,6 +18,8 @@ namespace StAntonCams
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
     using System.Collections.ObjectModel;
+    using System.Windows.Resources;
+    using System.Linq;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -60,16 +62,23 @@ namespace StAntonCams
         /// </summary>
         public void LoadData()
         {
-            this.Items.Add(new ItemViewModel() { CameraName = "Galzig", CameraUrl = "http://livecam.abbag.com/galzig.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Valluga", CameraUrl = "http://livecam.abbag.com/valluga.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Rendl", CameraUrl = "http://livecam.abbag.com/rendl.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Town", CameraUrl = "http://livecam.abbag.com/skicenter.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Nasserein", CameraUrl = "http://livecam.abbag.com/nasserein.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Gampen", CameraUrl = "http://livecam.abbag.com/gampen.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Galzig", CameraUrl = "http://livecam.abbag.com/galzig.jpg", CameraFileName = "galzig.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Valluga", CameraUrl = "http://livecam.abbag.com/valluga.jpg", CameraFileName = "valluga.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Rendl", CameraUrl = "http://livecam.abbag.com/rendl.jpg", CameraFileName = "rendl.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Town", CameraUrl = "http://livecam.abbag.com/skicenter.jpg", CameraFileName = "skicenter.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Nasserein", CameraUrl = "http://livecam.abbag.com/nasserein.jpg", CameraFileName = "nasserein.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "Gampen", CameraUrl = "http://livecam.abbag.com/gampen.jpg", CameraFileName = "gampen.jpg" });
+
+            foreach(var item in Items)
+            {
+                item.Update();
+            }
+
             this.IsDataLoaded = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void NotifyPropertyChanged(String propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

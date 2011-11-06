@@ -25,7 +25,6 @@ namespace StAntonCams
         {
             InitializeComponent();
 
-            // Set the data context of the listbox control to the data
             DataContext = App.ViewModel;
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
 

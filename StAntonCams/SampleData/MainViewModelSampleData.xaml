@@ -4,9 +4,9 @@
     xmlns:local="clr-namespace:StAntonCams"> 
     
     <local:MainViewModel.Items>
-        <local:ItemViewModel CameraName="Galzig" CameraUrl="http://livecam.abbag.com/galzig.jpg" />
-        <local:ItemViewModel CameraName="Valuga" CameraUrl="http://livecam.abbag.com/valluga.jpg" />
-        <local:ItemViewModel CameraName="Rendl" CameraUrl="http://livecam.abbag.com/rendl.jpg"/>
+        <local:ItemViewModel CameraName="Galzig" CameraUrl="http://livecam.abbag.com/galzig.jpg" LastUpdated="2011-11-07"/>
+        <local:ItemViewModel CameraName="Valuga" CameraUrl="http://livecam.abbag.com/valluga.jpg" LastUpdated="2011-11-07"/>
+        <local:ItemViewModel CameraName="Rendl" CameraUrl="http://livecam.abbag.com/rendl.jpg" LastUpdated="2011-11-07"/>
     </local:MainViewModel.Items>
     
 </local:MainViewModel>

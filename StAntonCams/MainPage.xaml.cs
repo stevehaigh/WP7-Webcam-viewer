@@ -26,15 +26,13 @@ namespace StAntonCams
             InitializeComponent();
 
             DataContext = App.ViewModel;
-            this.Loaded += new RoutedEventHandler(MainPage_Loaded);
 
-            // Set up initial tile
-            StandardTileData NewTileData = new StandardTileData
+            if (!App.ViewModel.IsDataLoaded)
             {
-                BackTitle = "Last update: " + DateTime.Now.ToShortDateString(),
-                BackBackgroundImage = new Uri("http://livecam.abbag.com/valluga.jpg"),
-                BackContent = "View from Valluga"
-            };
+                App.ViewModel.LoadData();
+            }
+
+            this.Loaded += new RoutedEventHandler(MainPage_Loaded);
 
 
             // Set up the tile here too
@@ -49,13 +47,12 @@ namespace StAntonCams
         // Load data for the ViewModel Items
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!App.ViewModel.IsDataLoaded)
-            {
-                App.ViewModel.LoadData();
-            }
+            App.ViewModel.RefreshCameras(false);
+        }
 
-            App.ViewModel.RefreshCameras();
-            
+        private void ApplicationBarIconButton_Click(object sender, EventArgs e)
+        {
+            App.ViewModel.RefreshCameras(true);
         }
     }
 }

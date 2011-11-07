@@ -12,12 +12,14 @@ namespace StAntonCams
     using System.IO;
     using System.IO.IsolatedStorage;
     using System;
+    using System.Diagnostics;
 
     public class IsoImageConverter : IValueConverter
     {
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            Debug.WriteLine("Converting file {0}", (string)value);
             var bitmap = new BitmapImage();
             try
             {
@@ -32,7 +34,9 @@ namespace StAntonCams
             }
             catch
             {
+                Debug.WriteLine("Problem opening file: {0}", (string)value);
             }
+
             return bitmap;
         }
 
@@ -40,7 +44,9 @@ namespace StAntonCams
         {
             using (var isoStore = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                return isoStore.OpenFile(file, FileMode.Open, FileAccess.Read);
+                var retval =  isoStore.OpenFile(file, FileMode.Open, FileAccess.Read);
+                Debug.WriteLine("Opened {0} (with {1} bytes) for reading.", file, retval.Length);
+                return retval;
             }
         }
 

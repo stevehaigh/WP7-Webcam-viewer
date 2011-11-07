@@ -106,7 +106,16 @@ namespace StAntonCams
         {
             get
             {
-                return lastUpdated;
+                var retVal = DateTime.MinValue;
+                using (IsolatedStorageFile myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+                {
+                    if (myIsolatedStorage.FileExists(this.CameraFileName))
+                    {
+                        return myIsolatedStorage.GetCreationTime(this.CameraFileName).UtcDateTime.ToLocalTime();
+                    }
+                }
+                
+                return retVal;
             }
             set
             {
@@ -118,10 +127,14 @@ namespace StAntonCams
             }
         }
 
-        public void Update()
+        public void Update(bool force)
         {
-            var request = (HttpWebRequest)WebRequest.Create(this.CameraUrl);
-            var result = (IAsyncResult)request.BeginGetResponse(ResponseCallback, request);
+            // Only update if last update was more than an hour ago
+            if (force || this.LastUpdated < DateTime.Now.AddHours(-1))
+            {
+                var request = (HttpWebRequest)WebRequest.Create(this.CameraUrl);
+                var result = (IAsyncResult)request.BeginGetResponse(ResponseCallback, request);
+            }
         }
 
         private void ResponseCallback(IAsyncResult result)
@@ -132,12 +145,9 @@ namespace StAntonCams
 
             using (IsolatedStorageFile myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                if (myIsolatedStorage.FileExists(this.CameraFileName))
-                {
-                   myIsolatedStorage.DeleteFile(this.CameraFileName);
-                }
+                var tempFileName = this.CameraFileName + ".tmp";
 
-                using (IsolatedStorageFileStream fileStream = new IsolatedStorageFileStream(this.CameraFileName, FileMode.Create, myIsolatedStorage))
+                using (IsolatedStorageFileStream fileStream = new IsolatedStorageFileStream(tempFileName, FileMode.Create, myIsolatedStorage))
                 {
                     using (BinaryWriter writer = new BinaryWriter(fileStream))
                     {
@@ -157,12 +167,25 @@ namespace StAntonCams
                         }
                     }
                 }
+
+                if (myIsolatedStorage.FileExists(this.CameraFileName))
+                {
+                    Debug.WriteLine("Removing {0}", this.CameraFileName);
+                    myIsolatedStorage.DeleteFile(this.CameraFileName);
+                }
+                Debug.WriteLine("Creating {0}", this.CameraFileName);
+                myIsolatedStorage.MoveFile(tempFileName, this.CameraFileName);
+
+                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    this.LastUpdated = DateTime.Now;
+                });
             }
 
-            System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
-            {
-                this.NotifyPropertyChanged("CameraFileName");
-            });
+            //System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+            //{
+            //    this.NotifyPropertyChanged("CameraFileName");
+            //});
         }
 
 

@@ -1,21 +1,24 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Resources;
-using System.IO.IsolatedStorage;
-using System.IO;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ItemViewModel.cs" company="Steve Haigh">
+//   
+// </copyright>
+// <summary>
+//   Defines the ItemViewModel type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-namespace StAntonCams
+namespace StAntonCams.ViewModels
 {
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.IO;
+    using System.IO.IsolatedStorage;
+    using System.Net;
+
+    /// <summary>
+    /// View Model for individual webcams, compatible with MVVM architecture.
+    /// </summary>
     public class ItemViewModel : INotifyPropertyChanged
     {
         /// <summary>
@@ -37,71 +40,78 @@ namespace StAntonCams
         /// Last update time stamp.
         /// </summary>
         private DateTime lastUpdated;
+        
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Name to display
+        /// Gets or sets the name to display
         /// </summary>
         /// <returns></returns>
         public string CameraName
         {
             get
             {
-                return cameraName;
+                return this.cameraName;
             }
+
             set
             {
-                if (value != cameraName)
+                if (value != this.cameraName)
                 {
-                    cameraName = value;
-                    NotifyPropertyChanged("CameraName");
+                    this.cameraName = value;
+                    this.NotifyPropertyChanged("CameraName");
                 }
             }
         }
 
         /// <summary>
-        /// URL of for static camera image.
+        /// Gets or sets the URL of for static camera image.
         /// </summary>
         /// <returns></returns>
         public string CameraUrl
         {
             get
             {
-                return cameraUrl;
+                return this.cameraUrl;
             }
+
             set
             {
-                if (value != cameraUrl)
+                if (value != this.cameraUrl)
                 {
-                    cameraUrl = value;
-                    NotifyPropertyChanged("CameraUrl");
+                    this.cameraUrl = value;
+                    this.NotifyPropertyChanged("CameraUrl");
                 }
             }
         }
 
         /// <summary>
-        /// File name of for static camera image in local storage.
+        /// Gets or sets the file name of for static camera image in local storage.
         /// </summary>
         /// <returns></returns>
         public string CameraFileName
         {
             get
             {
-                return cameraFileName;
+                return this.cameraFileName;
             }
+
             set
             {
-                if (value != cameraFileName)
+                if (value != this.cameraFileName)
                 {
-                    cameraFileName = value;
-                    NotifyPropertyChanged("CameraFileName");
+                    this.cameraFileName = value;
+                    this.NotifyPropertyChanged("CameraFileName");
                 }
             }
         }
 
         /// <summary>
-        /// File name of for static camera image in local storage.
+        /// Gets or setsmthe time of last update of iage in local store.
         /// </summary>
-        /// <returns></returns>
         public DateTime LastUpdated
         {
             get
@@ -117,50 +127,58 @@ namespace StAntonCams
                 
                 return retVal;
             }
+
             set
             {
-                if (value != lastUpdated)
+                if (value != this.lastUpdated)
                 {
-                    lastUpdated = value;
-                    NotifyPropertyChanged("LastUpdated");
+                    this.lastUpdated = value;
+                    this.NotifyPropertyChanged("LastUpdated");
                 }
             }
         }
 
+        /// <summary>
+        /// Updates images in local storage.
+        /// </summary>
+        /// <param name="force">if set to <c>true</c> the images will always be updared, otherwide images are only updae if they are more than 1 hour old.</param>
         public void Update(bool force)
         {
             // Only update if last update was more than an hour ago
             if (force || this.LastUpdated < DateTime.Now.AddHours(-1))
             {
                 var request = (HttpWebRequest)WebRequest.Create(this.CameraUrl);
-                var result = (IAsyncResult)request.BeginGetResponse(ResponseCallback, request);
+                request.BeginGetResponse(this.ResponseCallback, request);
             }
         }
 
+        /// <summary>
+        /// Response callback called when image data is returned.
+        /// </summary>
+        /// <param name="result">The async result object.</param>
         private void ResponseCallback(IAsyncResult result)
         {
-
             var request = (HttpWebRequest)result.AsyncState;
             var response = request.EndGetResponse(result);
 
-            using (IsolatedStorageFile myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+            using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
             {
                 var tempFileName = this.CameraFileName + ".tmp";
 
-                using (IsolatedStorageFileStream fileStream = new IsolatedStorageFileStream(tempFileName, FileMode.Create, myIsolatedStorage))
+                using (var fileStream = new IsolatedStorageFileStream(tempFileName, FileMode.Create, myIsolatedStorage))
                 {
-                    using (BinaryWriter writer = new BinaryWriter(fileStream))
+                    using (var writer = new BinaryWriter(fileStream))
                     {
-                        Stream resourceStream = response.GetResponseStream();
-                        long length = resourceStream.Length;
-                        byte[] buffer = new byte[4096];
-                        int readCount = 0;
+                        var resourceStream = response.GetResponseStream();
+                        var length = resourceStream.Length;
+                        var buffer = new byte[4096];
+                        var readCount = 0;
 
-                        using (BinaryReader reader = new BinaryReader(resourceStream))
+                        using (var reader = new BinaryReader(resourceStream))
                         {
                             while (readCount < length)
                             {
-                                int actual = reader.Read(buffer, 0, buffer.Length);
+                                var actual = reader.Read(buffer, 0, buffer.Length);
                                 readCount += actual;
                                 writer.Write(buffer, 0, actual);
                             }
@@ -173,6 +191,7 @@ namespace StAntonCams
                     Debug.WriteLine("Removing {0}", this.CameraFileName);
                     myIsolatedStorage.DeleteFile(this.CameraFileName);
                 }
+
                 Debug.WriteLine("Creating {0}", this.CameraFileName);
                 myIsolatedStorage.MoveFile(tempFileName, this.CameraFileName);
 
@@ -181,26 +200,16 @@ namespace StAntonCams
                     this.LastUpdated = DateTime.Now;
                 });
             }
-
-            //System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
-            //{
-            //    this.NotifyPropertyChanged("CameraFileName");
-            //});
         }
-
-
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Notifies the property changed.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
-        private void NotifyPropertyChanged(String propertyName)
+        private void NotifyPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler handler = this.PropertyChanged;
+
             if (null != handler)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));

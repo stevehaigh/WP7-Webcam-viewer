@@ -1,56 +1,42 @@
-﻿///
-///
-///
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MainViewModel.cs" company="Steve Haigh">
+//   
+// </copyright>
+// <summary>
+//   Main View Model for the app, compatible with MVVM architecture.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-namespace StAntonCams
+namespace StAntonCams.ViewModels
 {
-    using System;
-    using System.ComponentModel;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Text;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Shapes;
     using System.Collections.ObjectModel;
-    using System.Windows.Resources;
-    using System.Linq;
+    using System.ComponentModel;
 
+    /// <summary>
+    /// Main View Model for the app, compatible with MVVM architecture.
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
+        /// <summary>Initializes a new instance of the <see cref="MainViewModel"/> class.</summary>
         public MainViewModel()
         {
             this.Items = new ObservableCollection<ItemViewModel>();
         }
 
-        private int selectedTileImageIndex;
-
-        public string SelectedTileImageIndex
-        {
-            get
-            {
-                return selectedTileImageIndex.ToString();
-            }
-            set
-            {
-                if (value != selectedTileImageIndex.ToString())
-                {
-                    selectedTileImageIndex = int.Parse(value);
-                    NotifyPropertyChanged("SelectedTileImageIndex");
-                }
-            }
-        }
-
+        /// <summary>Property changed event handler.</summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        
         /// <summary>
-        /// A collection for ItemViewModel objects.
+        /// Gets the  collection for ItemViewModel objects.
         /// </summary>
         public ObservableCollection<ItemViewModel> Items { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is data loaded.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is data loaded; otherwise, <c>false</c>.
+        /// </value>
         public bool IsDataLoaded
         {
             get;
@@ -68,31 +54,36 @@ namespace StAntonCams
             this.Items.Add(new ItemViewModel() { CameraName = "Town", CameraUrl = "http://livecam.abbag.com/skicenter.jpg", CameraFileName = "skicenter.jpg" });
             this.Items.Add(new ItemViewModel() { CameraName = "Nasserein", CameraUrl = "http://livecam.abbag.com/nasserein.jpg", CameraFileName = "nasserein.jpg" });
             this.Items.Add(new ItemViewModel() { CameraName = "Gampen", CameraUrl = "http://livecam.abbag.com/gampen.jpg", CameraFileName = "gampen.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "St Christoph", CameraUrl = "http://livecam.abbag.com/christoph1.jpg", CameraFileName = "christoph1.jpg" });
-            this.Items.Add(new ItemViewModel() { CameraName = "Kapall", CameraUrl = "http://livecam.abbag.com/kapallbig.jpg", CameraFileName = "kapallbig.jpg" });
+            this.Items.Add(new ItemViewModel() { CameraName = "St Christoph", CameraUrl = "http://livecam.abbag.com/christoph.jpg", CameraFileName = "christoph1.jpg" });
+            ////this.Items.Add(new ItemViewModel() { CameraName = "Kapall", CameraUrl = "http://livecam.abbag.com/kapallbig.jpg", CameraFileName = "kapallbig.jpg" });
             this.Items.Add(new ItemViewModel() { CameraName = "Stuben", CameraUrl = "http://livecam.abbag.com/stuben.jpg", CameraFileName = "stuben.jpg" });
 
             this.IsDataLoaded = true;
         }
 
+        /// <summary>
+        /// Refreshes the cameras.
+        /// </summary>
+        /// <param name="force">if set to <c>true</c> updates will always ahppen, otherwide updates will only happen if images are more than 1 hour old.</param>
         public void RefreshCameras(bool force)
         {
-            foreach (var item in Items)
+            foreach (var item in this.Items)
             {
                 item.Update(force);
             }
-
+            
             this.NotifyPropertyChanged("Items");
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(String propertyName)
+        /// <summary>
+        /// Notifies that some property has changed.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        private void NotifyPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (null != handler)
+            if (this.PropertyChanged != null)
             {
-                handler(this, new PropertyChangedEventArgs(propertyName));
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

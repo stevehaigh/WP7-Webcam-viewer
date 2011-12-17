@@ -5,6 +5,8 @@
     using Microsoft.Phone.Controls;
     using Microsoft.Phone.Shell;
 
+    using StAntonCams.ViewModels;
+
     public partial class App : Application
     {
         private static MainViewModel viewModel = null;
